@@ -24,7 +24,6 @@ public class Server {
             return;
         }
         System.out.println("Server ready");
-        //scoreboard.printBoard();
         while(true) {
             try {
                 Socket socket = serverSocket.accept();

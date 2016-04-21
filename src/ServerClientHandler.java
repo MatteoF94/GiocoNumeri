@@ -9,6 +9,7 @@ import java.lang.Math;
 public class ServerClientHandler implements Runnable {
     private Socket socket;
     private Scoreboard scoreboard;
+    private Player player;
     private int score;
 
     public ServerClientHandler(Socket socket, Scoreboard scoreboard) {
@@ -23,18 +24,15 @@ public class ServerClientHandler implements Runnable {
             String line = in.nextLine();
             if(line.equals("login")) {
                 loginHandler(in, out);
-                scoreboard.printBoard();
             }
             label:
             while(true) {
                 line = in.nextLine();
-                System.out.println("|"+line+"|");
                 switch (line) {
                     case "partita":
                         gameHandler(in, out);
                         break;
                     case "record":
-                        System.out.println(scoreboard.getSize());
                         showRecords(out);
                         break;
                     case "fine":
@@ -55,7 +53,7 @@ public class ServerClientHandler implements Runnable {
     private void loginHandler(Scanner in, PrintWriter out) {
         String username = in.nextLine();
         String password = in.nextLine();
-        if(scoreboard.findPlayer(username,password)){
+        if((this.player = scoreboard.findPlayer(username,password))!=null){
             out.println(true);
             out.flush();
         } else {
@@ -105,6 +103,10 @@ public class ServerClientHandler implements Runnable {
                 score++;
             } else {
                 System.out.println("Errato...");
+                if(this.player.getScore()<score) {
+                    this.player.setScore(score);
+                    scoreboard.saveBoard();
+                }
                 out.println(false);
                 out.flush();
                 break;

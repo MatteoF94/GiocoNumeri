@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -11,6 +8,8 @@ import java.util.Vector;
 public class Scoreboard{
     private static Scoreboard ourInstance = null;
     private Vector<Player> board = new Vector<>();
+    private String score_path;
+    private int size;
 
     public static Scoreboard getInstance(String score_path){
         if(ourInstance == null) {
@@ -21,6 +20,7 @@ public class Scoreboard{
 
     private Scoreboard(String score_path){
         String[] tuple;
+        this.score_path=score_path;
         try {
             File file = new File(score_path);
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -35,36 +35,54 @@ public class Scoreboard{
         }
     }
 
-    public int getSize() {
+    public void fixSize() {
         int size = 0;
         Iterator iter = board.iterator();
         while(iter.hasNext()) {
             iter.next();
             size++;
         }
-        return size;
+        this.size = size;
     }
 
-    public void printBoard() {
-        Iterator iter = board.iterator();
-        while(iter.hasNext()) {
-            Player player = (Player) iter.next();
-            System.out.println("------------------------");
-            System.out.println("Player: "+player.getUsername()+"\nScore: "+player.getScore());
-            System.out.println("------------------------");
+    public int getSize() {
+        return this.size;
+    }
+
+    public synchronized void saveBoard() {
+        try {
+            File file = new File(this.score_path);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            Iterator iter = board.iterator();
+            while(iter.hasNext()) {
+                Player player = (Player) iter.next();
+                String rec = player.getInfoToSave();
+                writer.write(rec);
+            }
+            writer.close();
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
         }
     }
 
-    public boolean findPlayer(String username, String password) {
+    public Player findPlayer(String username, String password) {
         Iterator iter = board.iterator();
         while(iter.hasNext()) {
             Player player = (Player) iter.next();
             if (player.getUsername().equals(username)) {
-                return (player.getPassword().equals(password));
+                if(player.getPassword().equals(password)) {
+                    return player;
+                }
+                else {
+                    return null;
+                }
             }
         }
-        board.add(new Player(username, password));
-        return true;
+        Player player = new Player(username,password);
+        board.add(player);
+        fixSize();
+        saveBoard();
+        return player;
     }
 
     public Vector<Player> getBoard(){

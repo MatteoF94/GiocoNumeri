@@ -6,7 +6,7 @@ public class Player {
     private String password;
     private int score;
 
-    public Player(String username,String password) {
+    public Player(String username, String password) {
         this.username = username;
         this.password = password;
     }
@@ -24,11 +24,19 @@ public class Player {
         return this.password;
     }
 
+    public void setScore(int score) {
+        this.score = score;
+    }
+
     public int getScore() {
         return this.score;
     }
 
     public String getRecord() {
         return username+" "+score;
+    }
+
+    public String getInfoToSave() {
+        return username+"%%"+password+"%%"+score+"\n";
     }
 }
