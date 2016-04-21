@@ -28,9 +28,14 @@ public class ServerClientHandler implements Runnable {
             label:
             while(true) {
                 line = in.nextLine();
+                System.out.println("|"+line+"|");
                 switch (line) {
                     case "partita":
                         gameHandler(in, out);
+                        break;
+                    case "record":
+                        System.out.println(scoreboard.getSize());
+                        showRecords(out);
                         break;
                     case "fine":
                         break label;
@@ -52,10 +57,21 @@ public class ServerClientHandler implements Runnable {
         String password = in.nextLine();
         if(scoreboard.findPlayer(username,password)){
             out.println(true);
-            /* Seems like the flush() is always necessary */
             out.flush();
         } else {
             out.println(false);
+            out.flush();
+        }
+    }
+
+    private void showRecords(PrintWriter out) {
+        out.println(scoreboard.getSize());
+        out.flush();
+        Vector<Player> board = scoreboard.getBoard();
+        Iterator iter = board.iterator();
+        while(iter.hasNext()) {
+            Player player = (Player) iter.next();
+            out.println(player.getRecord());
             out.flush();
         }
     }

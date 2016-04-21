@@ -35,6 +35,16 @@ public class Scoreboard{
         }
     }
 
+    public int getSize() {
+        int size = 0;
+        Iterator iter = board.iterator();
+        while(iter.hasNext()) {
+            iter.next();
+            size++;
+        }
+        return size;
+    }
+
     public void printBoard() {
         Iterator iter = board.iterator();
         while(iter.hasNext()) {
@@ -50,15 +60,14 @@ public class Scoreboard{
         while(iter.hasNext()) {
             Player player = (Player) iter.next();
             if (player.getUsername().equals(username)) {
-                if (player.getPassword().equals(password)) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
+                return (player.getPassword().equals(password));
             }
         }
         board.add(new Player(username, password));
         return true;
+    }
+
+    public Vector<Player> getBoard(){
+        return this.board;
     }
 }

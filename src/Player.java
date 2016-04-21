@@ -27,4 +27,8 @@ public class Player {
     public int getScore() {
         return this.score;
     }
+
+    public String getRecord() {
+        return username+" "+score;
+    }
 }
