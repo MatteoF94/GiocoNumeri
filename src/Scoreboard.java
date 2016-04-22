@@ -71,6 +71,7 @@ public class Scoreboard{
             Player player = (Player) iter.next();
             if (player.getUsername().equals(username)) {
                 if(player.getPassword().equals(password)) {
+                    fixSize();
                     return player;
                 }
                 else {
